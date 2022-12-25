@@ -26,9 +26,9 @@ export class App extends React.Component {
     }
   };
 
-  getQuery = query => {
+  getQuery = event => {
     this.setState({
-      query,
+      query: event.text,
       images: [],
       page: 1,
       totalHits: 0,
@@ -58,8 +58,7 @@ export class App extends React.Component {
       this.setState(prevState => {
         return {
           images: [...prevState.images, ...hits],
-          totalHits,
-          error: '',
+          totalPages: Math.ceil(totalHits / 12),
         };
       });
     } catch (error) {
