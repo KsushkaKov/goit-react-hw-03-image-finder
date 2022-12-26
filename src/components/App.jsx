@@ -74,9 +74,16 @@ export class App extends React.Component {
   };
 
   render() {
-    const showBtn = this.state.images.length > 0;
-    const { images, isLoading, error, largeImgUrl, emptyRequest, query } =
-      this.state;
+    const {
+      images,
+      isLoading,
+      error,
+      largeImgUrl,
+      emptyRequest,
+      query,
+      totalPages,
+      page,
+    } = this.state;
     const showGallery = images.length > 0;
     const showError = error.length > 0;
     return (
@@ -104,8 +111,10 @@ export class App extends React.Component {
         {showGallery && (
           <ImageGallery onImageClick={this.handleImgClick} images={images} />
         )}
+        {totalPages > page && !isLoading && (
+          <Button onClick={this.handleLoadMore} />
+        )}
 
-        {showBtn ? <Button onClick={this.handleLoadMore} /> : null}
         {largeImgUrl && (
           <Modal
             largeImgUrl={largeImgUrl}
