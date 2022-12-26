@@ -13,8 +13,8 @@ export class Searchbar extends Component {
   handleSubmit = event => {
     event.preventDefault();
     if (!this.state.text) return;
-    this.props.onSubmit({ ...this.state.text });
-    event.target.reset();
+    this.props.onSubmit({ ...this.state });
+    this.setState({ text: '' });
   };
 
   render() {

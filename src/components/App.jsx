@@ -17,6 +17,7 @@ export class App extends React.Component {
     openModal: false,
     per_page: 12,
     largeImgUrl: '',
+    emptyRequest: false,
   };
 
   componentDidUpdate = async (_, prevState) => {
@@ -26,12 +27,13 @@ export class App extends React.Component {
     }
   };
 
-  getQuery = event => {
+  getQuery = queryText => {
     this.setState({
-      query: event.text,
+      query: queryText.text,
       images: [],
       page: 1,
       totalHits: 0,
+      emptyRequest: false,
     });
   };
 
@@ -54,7 +56,10 @@ export class App extends React.Component {
 
     try {
       const { hits, totalHits } = await ImageService.getImages(query, page);
-
+      if (hits.length === 0) {
+        this.setState({ emptyRequest: true });
+        return;
+      }
       this.setState(prevState => {
         return {
           images: [...prevState.images, ...hits],
@@ -70,7 +75,8 @@ export class App extends React.Component {
 
   render() {
     const showBtn = this.state.images.length > 0;
-    const { images, isLoading, error, largeImgUrl } = this.state;
+    const { images, isLoading, error, largeImgUrl, emptyRequest, query } =
+      this.state;
     const showGallery = images.length > 0;
     const showError = error.length > 0;
     return (
@@ -88,11 +94,16 @@ export class App extends React.Component {
             Ooops, something went wrong...<b>{error}</b>
           </p>
         )}
+        {emptyRequest && (
+          <p>
+            Please enter your request <b>{query}</b> correctly and try one more
+            time 🙏
+          </p>
+        )}
         {isLoading && <Loader />}
         {showGallery && (
           <ImageGallery onImageClick={this.handleImgClick} images={images} />
         )}
-        {!showGallery && <div>Please, enter your search request 🔎</div>}
 
         {showBtn ? <Button onClick={this.handleLoadMore} /> : null}
         {largeImgUrl && (
