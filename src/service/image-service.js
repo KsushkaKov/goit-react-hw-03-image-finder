@@ -14,6 +14,13 @@ export const getImages = async (query, page) => {
   };
   const { data } = await axios.get(`${axios.defaults.baseURL}`, { params });
 
-  //   const totalPages = Math.ceil(data.totalHits / params.per_page);
-  return data;
+  const images = data.hits.map(({ id, tags, webformatURL, largeImageURL }) => ({
+    id,
+    tags,
+    webformatURL,
+    largeImageURL,
+  }));
+
+  const totalPages = Math.ceil(data.totalHits / params.per_page);
+  return { images, totalPages };
 };

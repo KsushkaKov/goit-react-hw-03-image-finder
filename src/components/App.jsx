@@ -15,7 +15,6 @@ export class App extends React.Component {
     query: '',
     error: '',
     openModal: false,
-    per_page: 12,
     largeImgUrl: '',
     emptyRequest: false,
   };
@@ -55,15 +54,16 @@ export class App extends React.Component {
     this.setState({ isLoading: true });
 
     try {
-      const { hits, totalHits } = await ImageService.getImages(query, page);
-      if (hits.length === 0) {
+      const { images, totalPages } = await ImageService.getImages(query, page);
+      if (images.length === 0) {
         this.setState({ emptyRequest: true });
         return;
       }
+
       this.setState(prevState => {
         return {
-          images: [...prevState.images, ...hits],
-          totalPages: Math.ceil(totalHits / 12),
+          images: [...prevState.images, ...images],
+          totalPages,
         };
       });
     } catch (error) {
@@ -111,7 +111,7 @@ export class App extends React.Component {
         {showGallery && (
           <ImageGallery onImageClick={this.handleImgClick} images={images} />
         )}
-        {totalPages > page && !isLoading && (
+        {images.length > 0 && totalPages > page && !isLoading && (
           <Button onClick={this.handleLoadMore} />
         )}
 
